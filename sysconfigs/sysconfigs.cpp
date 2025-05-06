@@ -12,6 +12,11 @@ static const char* gs_sysconfigs_file_fpn = "configs/configs.ini";
 static const char* gs_ini_grp_sys_cfgs = "sys_cfgs";
 static const char* gs_ini_key_log_level = "log_level";
 
+static const char* gs_ini_grp_hv_modbus_conn = "hv_modbus_conn";
+static const char* gs_ini_key_mb_srvr_address = "mb_srvr_address";
+static const char* gs_ini_key_mb_resp_wait_time_ms = "mb_resp_wait_time_ms";
+
+
 static const char* gs_ini_grp_expo_ctrl = "expo_ctrl";
 static const char* gs_ini_key_cool_dura_factor = "cool_dura_factor";
 static const char* gs_ini_key_extra_cool_time_ms = "extra_cool_time_ms";
@@ -64,6 +69,8 @@ const char* g_str_and = "与";
 sys_configs_struct_t g_sys_configs_block;
 
 static const int gs_def_log_level = LOG_ERROR;
+static const int gs_def_mb_srvr_address = 1;
+static const int gs_def_mb_resp_wait_time_ms = 3000;
 
 static const int gs_def_cube_volt_kv_min = 40;
 static const int gs_def_cube_volt_kv_max = 90;
@@ -145,8 +152,8 @@ static RangeChecker<float> gs_cfg_file_value_gt0_float_ranger(0, 0, "",
 
 bool fill_sys_configs(QString * ret_str_ptr)
 {
-    bool ret = true, cfg_ret;
-    QString ret_str;
+    bool ret = true;
+
     QSettings settings(gs_sysconfigs_file_fpn, QSettings::IniFormat);
 
     /*--------------------*/
@@ -157,204 +164,16 @@ bool fill_sys_configs(QString * ret_str_ptr)
     settings.endGroup();
 
     /*--------------------*/
-    settings.beginGroup(gs_ini_grp_expo_ctrl);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_cube_volt_kv_min, toInt,
-                           g_sys_configs_block.cube_volt_kv_min, gs_def_cube_volt_kv_min,
-                           1, (RangeChecker<int>*)0);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_cube_volt_kv_max, toInt,
-                           g_sys_configs_block.cube_volt_kv_max, gs_def_cube_volt_kv_max,
-                           1, (RangeChecker<int>*)0);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_cube_current_ma_min, toFloat,
-                           g_sys_configs_block.cube_current_ma_min, gs_def_cube_current_ma_min,
-                           1, (RangeChecker<float>*)0);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_cube_current_ma_max, toFloat,
-                           g_sys_configs_block.cube_current_ma_max, gs_def_cube_current_ma_max,
-                           1, (RangeChecker<float>*)0);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_dura_sec_min, toFloat,
-                           g_sys_configs_block.dura_ms_min, gs_def_dura_sec_min,
-                           1000, (RangeChecker<float>*)0);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_dura_sec_max, toFloat,
-                           g_sys_configs_block.dura_ms_max, gs_def_dura_sec_max,
-                           1000, (RangeChecker<float>*)0);
-
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_coil_current_a_min, toFloat,
-                           g_sys_configs_block.coil_current_a_min, gs_def_coil_current_a_min,
-                           1, (RangeChecker<float>*)0);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_coil_current_a_max, toFloat,
-                           g_sys_configs_block.coil_current_a_max, gs_def_coil_current_a_max,
-                           1, (RangeChecker<float>*)0);
-
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_cool_dura_factor, toFloat,
-                           g_sys_configs_block.cool_dura_factor, gs_def_cool_dura_factor,
-                           1, &gs_cfg_file_value_ge0_float_ranger);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_extra_cool_time_ms, toInt,
-                           g_sys_configs_block.extra_cool_time_ms, gs_def_extra_cool_time_ms,
+    settings.beginGroup(gs_ini_grp_hv_modbus_conn);
+    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_mb_srvr_address, toInt,
+                           g_sys_configs_block.mb_srvr_address, gs_def_mb_srvr_address,
                            1, &gs_cfg_file_value_ge0_int_ranger);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_expo_prepare_time_ms, toInt,
-                           g_sys_configs_block.expo_prepare_time_ms, gs_def_expo_prepare_time_ms,
+    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_mb_resp_wait_time_ms, toInt,
+                           g_sys_configs_block.mb_resp_wait_time_ms, gs_def_mb_resp_wait_time_ms,
                            1, &gs_cfg_file_value_ge0_int_ranger);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_mb_consec_rw_wait_ms, toInt,
-                           g_sys_configs_block.consec_rw_wait_ms, gs_def_mb_consec_rw_wait_ms,
-                           1, &gs_cfg_file_value_gt0_int_ranger);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_mb_reconnect_wait_sep_ms, toInt,
-                           g_sys_configs_block.mb_reconnect_wait_ms, gs_def_mb_reconnect_wait_sep_ms,
-                           1, &gs_cfg_file_value_ge0_int_ranger);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_mb_err_retry_wait_ms, toInt,
-                       g_sys_configs_block.mb_err_retry_wait_ms, gs_def_mb_err_retry_wait_ms,
-                           1, &gs_cfg_file_value_ge0_int_ranger);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_test_time_stat_grain_sec, toInt,
-                   g_sys_configs_block.test_time_stat_grain_sec, gs_def_test_time_stat_grain_sec,
-                           1, &gs_cfg_file_value_ge0_int_ranger);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_mb_one_cmd_round_time_ms, toInt,
-                   g_sys_configs_block.mb_one_cmd_round_time_ms, gs_def_mb_one_cmd_round_time_ms,
-                           1, &gs_cfg_file_value_ge0_int_ranger);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_mb_cube_current_intf_unit, toInt,
-                           g_sys_configs_block.mb_cube_current_intf_unit,
-                           gs_def_mb_cube_current_intf_unit,
-                           1, (RangeChecker<int>*)0, (mb_cube_current_unit_e_t));
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_ui_current_unit, toInt,
-                           g_sys_configs_block.ui_current_unit,
-                           gs_def_ui_current_unit,
-                           1, (RangeChecker<int>*)0, (mb_cube_current_unit_e_t));
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_mb_dura_intf_unit, toInt,
-                           g_sys_configs_block.mb_dura_intf_unit,
-                           gs_def_mb_dura_intf_unit,
-                           1, (RangeChecker<int>*)0, (mb_dura_unit_e_t));
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_hidden_ui_mb_dura_unit, toInt,
-                           g_sys_configs_block.hidden_ui_mb_dura_unit,
-                           gs_def_hidden_ui_mb_dura_unit,
-                           1, (RangeChecker<int>*)0, (mb_dura_unit_e_t));
-
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_test_proc_monitor_period_ms, toInt,
-                   g_sys_configs_block.test_proc_monitor_period_ms, gs_def_test_proc_monitor_period_ms,
-                           1, &gs_cfg_file_value_gt0_int_ranger);
     settings.endGroup();
 
-    /*check the validation of config parameters.*/
-#define CHECK_LIMIT_RANGE(l_name, min_l, max_l, checker, unit_str) \
-    cfg_ret = true; \
-    if(((checker) && (!((checker)->range_check(min_l)) || !((checker)->range_check(max_l)))) \
-        || ((min_l) > (max_l)))\
-    {\
-        cfg_ret = false;\
-        ret_str += QString((l_name)) + \
-                   " [" + QString::number((min_l)) + ", " + QString::number((max_l)) + "] " +\
-                   (unit_str) + "\n";\
-    }\
-    ret = ret && cfg_ret;
 
-    CHECK_LIMIT_RANGE(g_str_cube_volt,
-                g_sys_configs_block.cube_volt_kv_min, g_sys_configs_block.cube_volt_kv_max,
-                &gs_cfg_file_value_gt0_int_ranger, g_str_volt_unit_kv)
-
-    CHECK_LIMIT_RANGE(g_str_cube_current,
-                g_sys_configs_block.cube_current_ma_min, g_sys_configs_block.cube_current_ma_max,
-                &gs_cfg_file_value_gt0_float_ranger, g_str_current_unit_ma)
-
-    CHECK_LIMIT_RANGE(g_str_expo_dura,
-                (g_sys_configs_block.dura_ms_min/1000), (g_sys_configs_block.dura_ms_max/1000),
-                &gs_cfg_file_value_gt0_float_ranger, g_str_dura_unit_s)
-
-    CHECK_LIMIT_RANGE(g_str_coil_current,
-                g_sys_configs_block.coil_current_a_min, g_sys_configs_block.coil_current_a_max,
-                &gs_cfg_file_value_ge0_float_ranger, g_str_current_unit_a)
-
-    if(!ret)  ret_str = QString(gs_str_cfg_param_limit_error) + "," + gs_str_plz_check + "\n" + ret_str;
-#undef CHECK_LIMIT_RANGE
-
-#define CHECK_ENUM(title_str, e_v, e_set, str_func) \
-    cfg_ret = true; ret_str += (ret_str.isEmpty() ? "" : "\n");\
-    if(!e_set.contains(e_v))\
-    {\
-        cfg_ret = false;\
-        ret_str += QString(title_str) + gs_str_should_be_one_val_of + "\n{";\
-        auto it = e_set.constBegin();\
-        while(it != e_set.constEnd()) {ret_str += str_func(*it) + ", "; ++it;}\
-        ret_str.chop(2);\
-        ret_str += "}\n";\
-        ret_str += QString(gs_str_actual_val) + str_func(e_v) + "\n";\
-    }\
-    ret = ret && cfg_ret;
-
-    QSet<mb_cube_current_unit_e_t> cube_current_unit_set;
-    cube_current_unit_set MB_CUBE_CURRENT_UNIT_E;
-    CHECK_ENUM((QString(g_str_current) + gs_str_mb_intf_unit_error + "," + gs_str_plz_check),
-               g_sys_configs_block.mb_cube_current_intf_unit,
-               cube_current_unit_set, QString::number)
-    CHECK_ENUM((QString(g_str_current) + gs_str_ui_unit_error + "," + gs_str_plz_check),
-               g_sys_configs_block.ui_current_unit,
-               cube_current_unit_set, QString::number)
-
-    QSet<mb_dura_unit_e_t> dura_unit_set;
-    dura_unit_set MB_DURA_UNIT_E;
-    CHECK_ENUM((QString(g_str_expo_dura) + gs_str_mb_intf_unit_error + "," + gs_str_plz_check),
-               g_sys_configs_block.mb_dura_intf_unit,
-               dura_unit_set, QString::number)
-    CHECK_ENUM((QString(gs_str_hidden_ui_mb_dura_unit) + gs_str_mb_intf_unit_error + "," + gs_str_plz_check),
-               g_sys_configs_block.hidden_ui_mb_dura_unit,
-               dura_unit_set, QString::number)
-
-    if(ret)
-    {
-        if(g_sys_configs_block.hidden_ui_mb_dura_unit == g_sys_configs_block.mb_dura_intf_unit)
-        {
-            ret = false;
-            ret_str = QString(g_str_expo_dura) + gs_str_mb_intf_unit
-                    + " " + g_str_and + " "
-                    + gs_str_hidden_ui_mb_dura_unit + " " + gs_str_cannot_be_the_same;
-        }
-    }
-
-    /*--------------------*/
-    settings.beginGroup(gs_ini_grp_ui_disp_cfg);
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_distance_group_disp, toInt,
-                           g_sys_configs_block.distance_group_disp, gs_def_distance_group_disp,
-                           1, &gs_cfg_file_value_01_int_ranger);
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_sw_ver_disp, toInt,
-                           g_sys_configs_block.sw_ver_disp, gs_def_sw_ver_disp,
-                           1, &gs_cfg_file_value_01_int_ranger);
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_hw_ver_disp, toInt,
-                           g_sys_configs_block.hw_ver_disp, gs_def_hw_ver_disp,
-                           1, &gs_cfg_file_value_01_int_ranger);
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_hv_ctrl_board_no_disp, toInt,
-                           g_sys_configs_block.hv_ctrl_board_no_disp, gs_def_hv_ctrl_board_no_disp,
-                           1, &gs_cfg_file_value_01_int_ranger);
-
-    GET_INF_CFG_NUMBER_VAL(settings, gs_ini_key_tube_or_oilbox_no_disp, toInt,
-                           g_sys_configs_block.tube_or_oilbox_no_disp,
-                           gs_def_tube_or_oilbox_no_disp,
-                           1, (RangeChecker<int>*)0, (ui_disp_tube_or_oilbox_str_e_t));
-    QSet<ui_disp_tube_or_oilbox_str_e_t> tube_or_oilbox_no_disp_set;
-    tube_or_oilbox_no_disp_set UI_DISP_TUBE_OR_OILBOX_E;
-    CHECK_ENUM(QString(gs_ini_key_tube_or_oilbox_no_disp),
-               g_sys_configs_block.tube_or_oilbox_no_disp, tube_or_oilbox_no_disp_set,
-               QString::number)
-    settings.endGroup();
-
-    /*--------------------*/
-    if(ret_str_ptr) *ret_str_ptr = ret_str;
+    if(ret_str_ptr) *ret_str_ptr = "";
     return ret;
-
-#undef CHECK_ENMU
 }

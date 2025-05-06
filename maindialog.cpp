@@ -14,11 +14,12 @@ MainDialog::MainDialog(QWidget *parent)
     installEventFilter(&m_key_filter);
 
 
-    m_pb_conn_settings_dlg = new SerialPortSetDlg(this, gs_str_pb_conn_settings_dlg_id_str,
-                                                  ui->dataCollConnSetPbt->text());
-    m_hv_conn_settings_dlg = new SerialPortSetDlg(this, gs_str_hv_conn_settings_dlg_id_str,
+    m_hv_conn_settings_dlg = new SerialPortSetDlg(this, &m_dev_conn_params.hv_conn_params,
+                                                  gs_str_hv_conn_settings_dlg_id_str,
                                                   ui->hvConnSetPbt->text());
-
+    m_pb_conn_settings_dlg = new SerialPortSetDlg(this, &m_dev_conn_params.pb_conn_params,
+                                                  gs_str_pb_conn_settings_dlg_id_str,
+                                                  ui->dataCollConnSetPbt->text());
     m_init_ok = true;
 }
 
@@ -30,10 +31,6 @@ MainDialog::~MainDialog()
 
 void MainDialog::on_dataCollConnSetPbt_clicked()
 {
-    int dlg_ret = m_pb_conn_settings_dlg->exec();
-
-    if(QDialog::Accepted == dlg_ret)
-    {}
 }
 
 
@@ -41,7 +38,20 @@ void MainDialog::on_hvConnSetPbt_clicked()
 {
     int dlg_ret = m_hv_conn_settings_dlg->exec();
 
-    if(QDialog::Accepted == dlg_ret)
-    {}
+    if(QDialog::Accepted == dlg_ret && m_dev_conn_params.hv_conn_params.valid)
+    {
+        ui->hvConnSetDispEdit->setText(m_dev_conn_params.hv_conn_params.info_str);
+    }
+}
+
+
+void MainDialog::on_pbConnSetPbt_clicked()
+{
+    int dlg_ret = m_pb_conn_settings_dlg->exec();
+
+    if(QDialog::Accepted == dlg_ret && m_dev_conn_params.pb_conn_params.valid)
+    {
+        ui->pbConnSetDispEdit->setText(m_dev_conn_params.pb_conn_params.info_str);
+    }
 }
 

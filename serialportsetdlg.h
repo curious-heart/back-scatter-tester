@@ -9,6 +9,14 @@
 
 #include "config_recorder/uiconfigrecorder.h"
 
+typedef struct
+{
+    bool valid;
+    QString com_port_s;
+    int boudrate, databits, parity, stopbits;
+    QString info_str;
+}serial_port_conn_params_struct_t;
+
 namespace Ui {
 class SerialPortSetDlg;
 }
@@ -19,6 +27,7 @@ class SerialPortSetDlg : public QDialog
 
 public:
     explicit SerialPortSetDlg(QWidget *parent = nullptr,
+                              serial_port_conn_params_struct_t * conn_params_block = nullptr,
                               QString dlg_id_str = "", QString dlg_name_str = "",
                               QSerialPort::BaudRate baudrate = QSerialPort::Baud115200,
                               QSerialPort::DataBits databits = QSerialPort::Data8,
@@ -26,11 +35,15 @@ public:
                               QSerialPort::StopBits stopbits = QSerialPort::OneStop);
     ~SerialPortSetDlg();
 
+    QString collect_conn_params();
+
 private slots:
     void on_sPortButtonBox_clicked(QAbstractButton *button);
 
 private:
     Ui::SerialPortSetDlg *ui;
+
+    serial_port_conn_params_struct_t * m_conn_params;
     QString m_dlg_id_str, m_dlg_name_str;
 
     typedef struct
@@ -49,6 +62,8 @@ private:
 
     UiConfigRecorder * m_cfg_recorder = nullptr;
     qobj_ptr_set_t m_rec_ui_cfg_fin, m_rec_ui_cfg_fout;
+
+    void format_params_info_str();
 };
 
 #endif // SERIALPORTSETDLG_H

@@ -1,9 +1,13 @@
-﻿#include <QSerialPort>
+﻿#include <QMessageBox>
+#include <QSerialPort>
 #include <QSerialPortInfo>
 
+#include "logger/logger.h"
 #include "common_tools/common_tool_func.h"
 #include "serialportsetdlg.h"
 #include "ui_serialportsetdlg.h"
+
+static const char* gs_str_no_available_com = "无可用串口";
 
 const SerialPortSetDlg::combobox_item_struct_t SerialPortSetDlg::baudrate_list[] =
 {
@@ -37,13 +41,15 @@ const SerialPortSetDlg::combobox_item_struct_t SerialPortSetDlg::stopbits_list[]
 };
 
 SerialPortSetDlg::SerialPortSetDlg(QWidget *parent,
+                                   serial_port_conn_params_struct_t * conn_params,
                                    QString dlg_id_str, QString dlg_name_str,
                                    QSerialPort::BaudRate baudrate,
                                    QSerialPort::DataBits databits,
                                    QSerialPort::Parity parity,
                                    QSerialPort::StopBits stopbits) :
-    QDialog(parent),
-    ui(new Ui::SerialPortSetDlg), m_dlg_id_str(dlg_id_str), m_dlg_name_str(dlg_name_str),
+    QDialog(parent), ui(new Ui::SerialPortSetDlg),
+    m_conn_params(conn_params),
+    m_dlg_id_str(dlg_id_str), m_dlg_name_str(dlg_name_str),
     m_def_baudrate(baudrate), m_def_databits(databits), m_def_parity(parity),
     m_def_stopbits(stopbits)
 {
@@ -100,12 +106,71 @@ SerialPortSetDlg::~SerialPortSetDlg()
 
 void SerialPortSetDlg::on_sPortButtonBox_clicked(QAbstractButton *button)
 {
+    if(!m_conn_params) return;
+
     if(button == ui->sPortButtonBox->button(QDialogButtonBox::Ok))
     {
-        QString ret_str;
-        if(m_cfg_recorder) m_cfg_recorder->record_ui_configs(this,
-                                                     m_rec_ui_cfg_fin, m_rec_ui_cfg_fout);
-        accept();
+        QString ret_str = collect_conn_params();
+
+        if(m_conn_params->valid)
+        {
+            if(m_cfg_recorder) m_cfg_recorder->record_ui_configs(this,
+                                                         m_rec_ui_cfg_fin, m_rec_ui_cfg_fout);
+            accept();
+        }
+        else
+        {
+            QMessageBox::critical(this, "Error", ret_str);
+        }
     }
 }
 
+QString SerialPortSetDlg::collect_conn_params()
+{
+    QString ret_str;
+
+    if(!m_conn_params)
+    {
+        DIY_LOG(LOG_ERROR, "conn params ptr is NULL.");
+        return ret_str;
+    }
+
+    m_conn_params->valid = false;
+    m_conn_params->info_str.clear();
+
+    m_conn_params->com_port_s = ui->sPortCOMNumCBox->currentText();
+    if(m_conn_params->com_port_s.isEmpty())
+    {
+        ret_str += gs_str_no_available_com;
+        return ret_str;
+    }
+    m_conn_params->boudrate = ui->sPortBaudrateCBox->currentData().toInt();
+    m_conn_params->databits = ui->sPortDatabitsCBox->currentData().toInt();
+    m_conn_params->parity = ui->sPortParityCBox->currentData().toInt();
+    m_conn_params->stopbits = ui->sPortStopbitsCBox->currentData().toInt();
+
+    m_conn_params->valid = true;
+
+    format_params_info_str();
+
+    return ret_str;
+}
+
+void SerialPortSetDlg::format_params_info_str()
+{
+    if(!m_conn_params)
+    {
+        DIY_LOG(LOG_ERROR, "conn params ptr is NULL.");
+        return;
+    }
+
+    QString &info_str = m_conn_params->info_str;
+
+    info_str.clear();
+
+    info_str += ui->sPortCOMNumLbl->text() + ":" + ui->sPortCOMNumCBox->currentText() + "\n";
+    info_str += ui->sPortBaudrateLbl->text() + ":" + ui->sPortBaudrateCBox->currentText() + "\n";
+    info_str += ui->sPortDatabitsLbl->text() + ":" + ui->sPortDatabitsCBox->currentText() + "\n";
+    info_str += ui->sPortParityLbl->text() + ":" + ui->sPortParityCBox->currentText() + "\n";
+    info_str += ui->sPortStopbitsLbl->text() + ":" + ui->sPortStopbitsCBox->currentText() + "\n";
+}

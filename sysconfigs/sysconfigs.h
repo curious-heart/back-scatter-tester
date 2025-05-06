@@ -34,30 +34,7 @@ typedef struct
 {
     int log_level;
 
-    float cool_dura_factor;
-    int extra_cool_time_ms;
-    int expo_prepare_time_ms, consec_rw_wait_ms;
-
-    int cube_volt_kv_min;
-    int cube_volt_kv_max;
-    float cube_current_ma_min;
-    float cube_current_ma_max;
-    float dura_ms_min;
-    float dura_ms_max;
-
-    float coil_current_a_min, coil_current_a_max;
-
-    int mb_reconnect_wait_ms, mb_err_retry_wait_ms;
-    int test_time_stat_grain_sec;
-    int mb_one_cmd_round_time_ms;
-
-    mb_cube_current_unit_e_t mb_cube_current_intf_unit, ui_current_unit;
-    mb_dura_unit_e_t mb_dura_intf_unit, hidden_ui_mb_dura_unit;
-
-    int test_proc_monitor_period_ms;
-
-    int distance_group_disp, sw_ver_disp, hw_ver_disp, hv_ctrl_board_no_disp;
-    ui_disp_tube_or_oilbox_str_e_t tube_or_oilbox_no_disp;
+    int mb_srvr_address, mb_resp_wait_time_ms;
 }sys_configs_struct_t;
 
 extern sys_configs_struct_t g_sys_configs_block;
