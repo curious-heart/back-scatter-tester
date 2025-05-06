@@ -64,42 +64,42 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QLabel" name="sPortBitCntLbl">
+         <widget class="QLabel" name="sPortDatabitsLbl">
           <property name="text">
            <string>bit数</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="sPortBitCntCBox"/>
+         <widget class="QComboBox" name="sPortDatabitsCBox"/>
         </item>
        </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QLabel" name="sPortChksumbitLbl">
+         <widget class="QLabel" name="sPortParityLbl">
           <property name="text">
            <string>校验位</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="sPortChksumbitCBox"/>
+         <widget class="QComboBox" name="sPortParityCBox"/>
         </item>
        </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
-         <widget class="QLabel" name="sPortStopbitLbl">
+         <widget class="QLabel" name="sPortStopbitsLbl">
           <property name="text">
            <string>停止位</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="sPortStopbitCBox"/>
+         <widget class="QComboBox" name="sPortStopbitsCBox"/>
         </item>
        </layout>
       </item>

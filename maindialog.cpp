@@ -1,6 +1,9 @@
 ﻿#include "maindialog.h"
 #include "ui_maindialog.h"
 
+static const char* gs_str_hv_conn_settings_dlg_id_str = "hv_conn_settings";
+static const char* gs_str_pb_conn_settings_dlg_id_str = "pb_conn_settings";
+
 MainDialog::MainDialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::MainDialog), m_key_filter(this, this)
@@ -10,11 +13,35 @@ MainDialog::MainDialog(QWidget *parent)
     m_key_filter.add_keys_to_filter(Qt::Key_Escape);
     installEventFilter(&m_key_filter);
 
+
+    m_pb_conn_settings_dlg = new SerialPortSetDlg(this, gs_str_pb_conn_settings_dlg_id_str,
+                                                  ui->dataCollConnSetPbt->text());
+    m_hv_conn_settings_dlg = new SerialPortSetDlg(this, gs_str_hv_conn_settings_dlg_id_str,
+                                                  ui->hvConnSetPbt->text());
+
     m_init_ok = true;
 }
 
 MainDialog::~MainDialog()
 {
     delete ui;
+}
+
+
+void MainDialog::on_dataCollConnSetPbt_clicked()
+{
+    int dlg_ret = m_pb_conn_settings_dlg->exec();
+
+    if(QDialog::Accepted == dlg_ret)
+    {}
+}
+
+
+void MainDialog::on_hvConnSetPbt_clicked()
+{
+    int dlg_ret = m_hv_conn_settings_dlg->exec();
+
+    if(QDialog::Accepted == dlg_ret)
+    {}
 }
 

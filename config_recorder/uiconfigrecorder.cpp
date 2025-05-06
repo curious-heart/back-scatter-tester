@@ -9,8 +9,13 @@
 #include "uiconfigrecorder.h"
 #include "logger/logger.h"
 
-UiConfigRecorder::UiConfigRecorder(QObject *parent, QString cfg_file_fpn)
-    : QObject{parent}, m_cfg_file_fpn(cfg_file_fpn)
+UiConfigRecorder::UiConfigRecorder(QObject *parent,
+                                   QString sec_pre_str, QString sec_post_str,
+                                   QString key_pre_str, QString key_post_str,
+                                   QString cfg_file_fpn)
+    : QObject{parent}, m_cfg_file_fpn(cfg_file_fpn),
+      m_sec_pre_str(sec_pre_str), m_sec_post_str(sec_post_str),
+      m_key_pre_str(key_pre_str), m_key_post_str(key_post_str)
 {
     if(cfg_file_fpn.isEmpty())
     {
@@ -42,7 +47,9 @@ UiConfigRecorder::UiConfigRecorder(QObject *parent, QString cfg_file_fpn)
             do_it = !filter_out.contains(LIST_VAR_NAME(ctrl_type)[idx]);\
         if(!do_it) continue;\
                             \
-        cfg_setting.setValue(LIST_VAR_NAME(ctrl_type)[idx]->objectName(),\
+        cfg_setting.setValue(m_key_pre_str \
+                             + LIST_VAR_NAME(ctrl_type)[idx]->objectName() \
+                             + m_key_post_str, \
                              LIST_VAR_NAME(ctrl_type)[idx]->value);  \
     }
 
@@ -62,7 +69,7 @@ void UiConfigRecorder::record_ui_configs(QWidget * ui_widget,
         return;
     }
 
-    cfg_setting.beginGroup(ui_widget->objectName());
+    cfg_setting.beginGroup(m_sec_pre_str + ui_widget->objectName() + m_sec_post_str);
 
     CTRL_WRITE_TO_CFG(QLineEdit, text())
     CTRL_WRITE_TO_CFG(QTextEdit, toPlainText())
@@ -84,7 +91,10 @@ void UiConfigRecorder::record_ui_configs(QWidget * ui_widget,
             do_it = !filter_out.contains(LIST_VAR_NAME(ctrl_type)[idx]);\
         if(!do_it) continue;\
                             \
-        str_val = cfg_setting.value(LIST_VAR_NAME(ctrl_type)[idx]->objectName(),"").toString();\
+        str_val = cfg_setting.value(m_key_pre_str \
+                                    + LIST_VAR_NAME(ctrl_type)[idx]->objectName() \
+                                    + m_key_post_str, \
+                                    "").toString();\
         val;\
         if(cond)\
         {\
@@ -111,7 +121,7 @@ void UiConfigRecorder::load_configs_to_ui(QWidget * ui_widget,
         return;
     }
 
-    cfg_setting.beginGroup(ui_widget->objectName());
+    cfg_setting.beginGroup(m_sec_pre_str + ui_widget->objectName() + m_sec_post_str);
 
     /* Be careful: Load radiobutton and checkbox firstly is more reasonable, because these
      * ones are normally used as config-switch, which may affect the content of editor widget.
