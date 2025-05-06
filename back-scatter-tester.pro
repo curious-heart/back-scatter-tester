@@ -15,11 +15,9 @@ INCLUDEPATH += "$$[QT_INSTALL_HEADERS]/QtSerialBus/$$[QT_VERSION]/QtSerialBus" \
 SOURCES += \
     common_tools/common_tool_func.cpp \
     config_recorder/uiconfigrecorder.cpp \
-    hv_connsettings.cpp \
     logger/logger.cpp \
     main.cpp \
     maindialog.cpp \
-    pb_connsettings.cpp \
     qtsingleapplication/qtlocalpeer.cpp \
     qtsingleapplication/qtlockedfile.cpp \
     qtsingleapplication/qtlockedfile_unix.cpp \
@@ -27,16 +25,15 @@ SOURCES += \
     qtsingleapplication/qtsingleapplication.cpp \
     qtsingleapplication/qtsinglecoreapplication.cpp \
     sc_data_connsettings.cpp \
+    serialportsetdlg.cpp \
     sysconfigs/sysconfigs.cpp \
     version_def/version_def.cpp
 
 HEADERS += \
     common_tools/common_tool_func.h \
     config_recorder/uiconfigrecorder.h \
-    hv_connsettings.h \
     logger/logger.h \
     maindialog.h \
-    pb_connsettings.h \
     qtsingleapplication/QtLockedFile \
     qtsingleapplication/QtSingleApplication \
     qtsingleapplication/qtlocalpeer.h \
@@ -44,14 +41,14 @@ HEADERS += \
     qtsingleapplication/qtsingleapplication.h \
     qtsingleapplication/qtsinglecoreapplication.h \
     sc_data_connsettings.h \
+    serialportsetdlg.h \
     sysconfigs/sysconfigs.h \
     version_def/version_def.h
 
 FORMS += \
-    hv_connsettings.ui \
     maindialog.ui \
-    pb_connsettings.ui \
-    sc_data_connsettings.ui
+    sc_data_connsettings.ui \
+    serialportsetdlg.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>hv_connsettings</class>
- <widget class="QDialog" name="hv_connsettings">
+ <class>SerialPortSetDlg</class>
+ <widget class="QDialog" name="SerialPortSetDlg">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>195</width>
-    <height>269</height>
+    <width>187</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,12 +15,12 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="serialGroupBox">
+    <widget class="QGroupBox" name="sPortSetGBox">
      <property name="enabled">
       <bool>true</bool>
      </property>
      <property name="title">
-      <string>光机连接设置</string>
+      <string>串口连接设置</string>
      </property>
      <property name="checkable">
       <bool>false</bool>
@@ -32,14 +32,14 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLabel" name="hvConnCOMNumLbl">
+         <widget class="QLabel" name="sPortCOMNumLbl">
           <property name="text">
            <string>COM口</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="hvConnCOMNumCBox">
+         <widget class="QComboBox" name="sPortCOMNumCBox">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -50,56 +50,56 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLabel" name="hvConnBaudrateLbl">
+         <widget class="QLabel" name="sPortBaudrateLbl">
           <property name="text">
            <string>波特率</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="hvConnBaudrateCBox"/>
+         <widget class="QComboBox" name="sPortBaudrateCBox"/>
         </item>
        </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QLabel" name="hvConnBitCntLbl">
+         <widget class="QLabel" name="sPortBitCntLbl">
           <property name="text">
            <string>bit数</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="hvConnBitCntCBox"/>
+         <widget class="QComboBox" name="sPortBitCntCBox"/>
         </item>
        </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QLabel" name="hvConnChksumbitLbl">
+         <widget class="QLabel" name="sPortChksumbitLbl">
           <property name="text">
            <string>校验位</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="hvConnChksumbitCBox"/>
+         <widget class="QComboBox" name="sPortChksumbitCBox"/>
         </item>
        </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
-         <widget class="QLabel" name="hvConnStopbitLbl">
+         <widget class="QLabel" name="sPortStopbitLbl">
           <property name="text">
            <string>停止位</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="hvConnStopbitCBox"/>
+         <widget class="QComboBox" name="sPortStopbitCBox"/>
         </item>
        </layout>
       </item>
@@ -107,7 +107,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="QDialogButtonBox" name="sPortButtonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -121,9 +121,9 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>sPortButtonBox</sender>
    <signal>accepted()</signal>
-   <receiver>hv_connsettings</receiver>
+   <receiver>SerialPortSetDlg</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -137,9 +137,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>sPortButtonBox</sender>
    <signal>rejected()</signal>
-   <receiver>hv_connsettings</receiver>
+   <receiver>SerialPortSetDlg</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

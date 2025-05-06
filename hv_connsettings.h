@@ -1,4 +1,4 @@
-#ifndef HV_CONNSETTINGS_H
+﻿#ifndef HV_CONNSETTINGS_H
 #define HV_CONNSETTINGS_H
 
 #include <QDialog>
